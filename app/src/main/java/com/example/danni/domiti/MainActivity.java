@@ -15,29 +15,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    private TextView NDname, NDcelular;
+    private CircleImageView NDfoto;
+    private NuevoUsuario infoUsuario;
+    private StorageReference storageReferenceMain;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -46,11 +52,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        FragmentManager fragmentManager =getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.contenedor,new TabsFragment()).commit();
-
+        View headerView = navigationView.getHeaderView(0);
         SharedPreferences sharedPrefs = getSharedPreferences("DomitiPreferences", this.MODE_PRIVATE);
         SharedPreferences.Editor editorSP= sharedPrefs.edit();
 
@@ -61,10 +63,51 @@ public class MainActivity extends AppCompatActivity
             editorSP.putString("Celular",Celular);
             editorSP.commit();
             Toast.makeText(getApplicationContext(),Celular,Toast.LENGTH_SHORT).show();
+
+            //INFORMACION DE PERFIL EN EL NAVDRAWER
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Usuarios").child(Celular);
+
+            infoUsuario=new NuevoUsuario();
+            NDfoto=(CircleImageView)headerView.findViewById(R.id.NDfoto);
+            NDname=(TextView)headerView.findViewById(R.id.NDname);
+            NDcelular=(TextView)headerView.findViewById(R.id.NDcelular);
+            myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    infoUsuario=dataSnapshot.getValue(NuevoUsuario.class);
+
+                    NDname.setText(infoUsuario.getNombre());
+                    NDcelular.setText(infoUsuario.getCelular());
+
+                    storageReferenceMain = FirebaseStorage.getInstance().getReferenceFromUrl(infoUsuario.getFoto());
+
+                    Glide.with(getApplicationContext())
+                            .using(new FirebaseImageLoader())
+                            .load(storageReferenceMain)
+                            .into(NDfoto);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
         else{
 
         }
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+        FragmentManager fragmentManager =getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.contenedor,new TabsFragment()).commit();
+
+
+
+
+
+
     }
 
     @Override
@@ -110,7 +153,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.inicio) {
             fragmentManager.beginTransaction().replace(R.id.contenedor,new TabsFragment()).commit();
         } else if (id == R.id.perfil) {
-
+            fragmentManager.beginTransaction().replace(R.id.contenedor,new PerfilFragment()).commit();
         } else if (id == R.id.ubicacion) {
 
         }  else if (id == R.id.info_domiti) {

@@ -27,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     //Autenticacion Firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseUser user;
 
     private NuevoUsuario nuevoUsuario;
 
@@ -36,6 +36,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         mAuth = FirebaseAuth.getInstance();
+
+
 
         eUsername=(EditText)findViewById(R.id.eUsername);
         eCelular=(EditText)findViewById(R.id.eCelular);
@@ -66,7 +68,28 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()){
-                            acceso();
+                            user = FirebaseAuth.getInstance().getCurrentUser();
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(eCelular.getText().toString())
+                                    .build();
+
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(getApplicationContext(),"Registro Exitoso",Toast.LENGTH_SHORT).show();
+                                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                                DatabaseReference myRef = database.getReference("Usuarios").child(Celular);
+                                                nuevoUsuario=new NuevoUsuario(eUsername.getText().toString(), Celular, eEmail.getText().toString(), eDireccion.getText().toString(), foto);
+                                                myRef.setValue(nuevoUsuario);
+                                                Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+                                                startActivity(intent);
+                                                finish();
+
+                                            }
+                                        }
+                                    });
 
                         }else{
                             Toast.makeText(RegisterActivity.this, "Registro Fallo",Toast.LENGTH_SHORT).show();
@@ -82,30 +105,5 @@ public class RegisterActivity extends AppCompatActivity {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
     }
-    private void acceso(){
 
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(eCelular.getText().toString())
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(),"Registro Exitoso",Toast.LENGTH_SHORT).show();
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference("Usuarios").child(Celular);
-                            nuevoUsuario=new NuevoUsuario(eUsername.getText().toString(), Celular, eEmail.getText().toString(), eDireccion.getText().toString(), foto);
-                            myRef.setValue(nuevoUsuario);
-                            Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-
-                        }
-                    }
-                });
-
-    }
 }

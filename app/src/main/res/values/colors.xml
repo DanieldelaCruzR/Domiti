@@ -3,6 +3,9 @@
 	<color name="colorPrimary">#8c80ff</color>
     <color name="colorPrimaryDark">#a399ff</color>
     <color name="colorAccent">#FF9800</color>
+	<color name="naranjitch">#FF9800</color>
+
+	<color name="esencia">#e8e6ff</color>
     <color name="primary_light">#B2DFDB</color>
     <color name="primary_text">#FFFFFF</color>
     <color name="secondary_text">#757575</color>

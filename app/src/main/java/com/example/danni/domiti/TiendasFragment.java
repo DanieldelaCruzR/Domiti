@@ -2,6 +2,7 @@ package com.example.danni.domiti;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -76,6 +78,18 @@ public class TiendasFragment extends Fragment {
             }
         });
 
+        listaTiendas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String nombre = tiendas.get(position).getNombre();
+                String tiendId = tiendas.get(position).getCelular();
+                Intent intent = new Intent(getActivity(),ProductosActivity.class);
+                //pasar el celular
+                intent.putExtra("TiendaId",tiendId);
+                intent.putExtra("TiendaNombre",nombre);
+                getActivity().startActivity(intent);
+            }
+        });
 
         return view;
     }
