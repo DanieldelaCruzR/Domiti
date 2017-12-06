@@ -1,6 +1,7 @@
 package com.example.danni.domiti;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -78,11 +79,18 @@ public class RegisterActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                Toast.makeText(getApplicationContext(),"Registro Exitoso",Toast.LENGTH_SHORT).show();
+
                                                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                                                 DatabaseReference myRef = database.getReference("Usuarios").child(Celular);
                                                 nuevoUsuario=new NuevoUsuario(eUsername.getText().toString(), Celular, eEmail.getText().toString(), eDireccion.getText().toString(), foto);
                                                 myRef.setValue(nuevoUsuario);
+                                                Toast.makeText(getApplicationContext(),"Registro Exitoso",Toast.LENGTH_SHORT).show();
+
+                                                FirebaseAuth.getInstance().signOut();
+                                                SharedPreferences sharedPrefs = getSharedPreferences("DomitiPreferences", RegisterActivity.MODE_PRIVATE);
+                                                SharedPreferences.Editor editorSP= sharedPrefs.edit();
+                                                editorSP.putInt("optLog",0);
+                                                editorSP.commit();
                                                 Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
                                                 startActivity(intent);
                                                 finish();
