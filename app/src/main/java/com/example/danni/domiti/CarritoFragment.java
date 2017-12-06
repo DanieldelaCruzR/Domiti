@@ -118,7 +118,7 @@ public class CarritoFragment extends Fragment {
                 intent.putExtra("TiendaNombre",nombre);
                 intent.putExtra("NumeroPedido",numeroPedido);
                 getActivity().startActivity(intent);
-                
+
             }
         });
 

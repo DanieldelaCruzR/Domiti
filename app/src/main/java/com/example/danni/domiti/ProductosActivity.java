@@ -170,8 +170,12 @@ public class ProductosActivity extends AppCompatActivity {
     }
     private void funcion2(final int pos,final int cantidad){
         String Nombre = productos.get(pos).getNombre();
-        myRef3 = database.getReference("Pedidos_Tienda").child(tiendaId).child(clienteId).child(numPedidos);
-        myRef3.child(Nombre).setValue(cantidad);
+        String Precio = productos.get(pos).getPrecio();
+        int total = Integer.valueOf(Precio)*cantidad;
+        myRef3 = database.getReference("Pedidos_Tienda2").child(tiendaId).child(clienteId).child(Nombre);
+        myRef3.child("Nombre").setValue(Nombre);
+        myRef3.child("Cantidad").setValue(Integer.toString(cantidad));
+        myRef3.child("Total").setValue(Integer.toString(total));
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
