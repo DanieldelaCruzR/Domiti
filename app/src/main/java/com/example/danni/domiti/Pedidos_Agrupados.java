@@ -10,6 +10,15 @@ public class Pedidos_Agrupados {
     private String NombreTienda;
     private String NumeroPedido;
     private String TiendaId;
+    private String Foto;
+
+    public String getFoto() {
+        return Foto;
+    }
+
+    public void setFoto(String foto) {
+        Foto = foto;
+    }
 
     public String getCantidad() {
         return Cantidad;
@@ -55,12 +64,12 @@ public class Pedidos_Agrupados {
 
     }
 
-    public Pedidos_Agrupados(String cantidad, String total, String nombreTienda, String numeroPedido, String tiendaId) {
-
+    public Pedidos_Agrupados(String cantidad, String total, String nombreTienda, String numeroPedido, String tiendaId, String foto) {
         Cantidad = cantidad;
         Total = total;
         NombreTienda = nombreTienda;
         NumeroPedido = numeroPedido;
         TiendaId = tiendaId;
+        Foto = foto;
     }
 }

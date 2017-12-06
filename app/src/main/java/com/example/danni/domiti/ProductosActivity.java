@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class ProductosActivity extends AppCompatActivity {
     private ListView listaProductos;
     private ArrayList<NuevoProducto> productos;
-    String tiendaId,tiendaNombre,clienteId;
+    String tiendaId,tiendaNombre,clienteId, tiendaFoto;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef1,myRef2,myRef3;
     String numPedidos = "0";
@@ -49,6 +49,7 @@ public class ProductosActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         tiendaId = extras.getString("TiendaId");
         tiendaNombre = extras.getString("TiendaNombre");
+        tiendaFoto= extras.getString("TiendaFoto");
         setTitle(tiendaNombre);
         ActionBar ab =getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -148,7 +149,7 @@ public class ProductosActivity extends AppCompatActivity {
 
 
 
-        SharedPreferences sharedPrefs = getSharedPreferences("SharedPreferences", this.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = getSharedPreferences("DomitiPreferences", this.MODE_PRIVATE);
         SharedPreferences.Editor editorSP = sharedPrefs.edit();
         editorSP.putString("numPedidos",numPedidos);
         editorSP.commit();
@@ -157,11 +158,12 @@ public class ProductosActivity extends AppCompatActivity {
     private void funcion(final int pos,final int cantidad){
         String Nombre = productos.get(pos).getNombre();
         String precio = productos.get(pos).getPrecio();
+        String fotoProducto = productos.get(pos).getFoto();
         int total = Integer.valueOf(precio);
         total *= cantidad;
         // tiendaNombre
         Pedidos_DataBase pedido_database = new Pedidos_DataBase(String.valueOf(cantidad),
-                String.valueOf(total),Nombre,tiendaNombre,numPedidos,tiendaId);
+                String.valueOf(total),Nombre,tiendaNombre,numPedidos,tiendaId,tiendaFoto,fotoProducto);
         myRef2 = database.getReference("Pedidos_Cliente").child(clienteId).child(tiendaId).
                 child(numPedidos).child(Nombre);
         myRef2.setValue(pedido_database);
@@ -172,10 +174,12 @@ public class ProductosActivity extends AppCompatActivity {
         String Nombre = productos.get(pos).getNombre();
         String Precio = productos.get(pos).getPrecio();
         int total = Integer.valueOf(Precio)*cantidad;
-        myRef3 = database.getReference("Pedidos_Tienda2").child(tiendaId).child(clienteId).child(Nombre);
+
+        myRef3 = database.getReference("Pedidos_Tienda").child(tiendaId).child(clienteId).child(numPedidos).child(Nombre);
         myRef3.child("Nombre").setValue(Nombre);
         myRef3.child("Cantidad").setValue(Integer.toString(cantidad));
         myRef3.child("Total").setValue(Integer.toString(total));
+        myRef3.child("Pedido").setValue(numPedidos);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -11,6 +11,24 @@ public class Pedidos_DataBase {
     private String NombreTienda;
     private String NumPedido;
     private String TiendaId;
+    private String FotoTienda;
+    private String FotoProducto;
+
+    public String getFotoTienda() {
+        return FotoTienda;
+    }
+
+    public void setFotoTienda(String fotoTienda) {
+        FotoTienda = fotoTienda;
+    }
+
+    public String getFotoProducto() {
+        return FotoProducto;
+    }
+
+    public void setFotoProducto(String fotoProducto) {
+        FotoProducto = fotoProducto;
+    }
 
     public String getCantidad() {
         return Cantidad;
@@ -64,13 +82,14 @@ public class Pedidos_DataBase {
 
     }
 
-    public Pedidos_DataBase(String cantidad, String total, String nombreProd, String nombreTienda, String numPedido, String tiendaId) {
-
+    public Pedidos_DataBase(String cantidad, String total, String nombreProd, String nombreTienda, String numPedido, String tiendaId, String fotoTienda, String fotoProducto) {
         Cantidad = cantidad;
         Total = total;
         NombreProd = nombreProd;
         NombreTienda = nombreTienda;
         NumPedido = numPedido;
         TiendaId = tiendaId;
+        FotoTienda = fotoTienda;
+        FotoProducto = fotoProducto;
     }
 }

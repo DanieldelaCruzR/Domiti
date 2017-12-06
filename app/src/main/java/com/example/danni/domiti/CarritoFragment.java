@@ -13,14 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -36,6 +41,7 @@ public class CarritoFragment extends Fragment {
     private ArrayList<Pedidos_Agrupados> pedidos_tiendas;
     private FirebaseDatabase database;
     String clienteId;
+    private StorageReference storageRef;
 
     public CarritoFragment() {
         // Required empty public constructor
@@ -76,7 +82,7 @@ public class CarritoFragment extends Fragment {
                     for (DataSnapshot hijo : padre.getChildren()){
                         productos_todos.clear();  //nuevo numero de pedido
                         int cantidadTotal=0,precioTotal=0;
-                        String nombreTienda="vacio",numeroPedido="vacio",tiendaId="vacio";
+                        String nombreTienda="vacio",numeroPedido="vacio",tiendaId="vacio",tiendaFoto="vacio";
 
                         for (DataSnapshot hijo2 : hijo.getChildren()){
                             //agrega todos los prod
@@ -88,13 +94,14 @@ public class CarritoFragment extends Fragment {
                             nombreTienda = productos_todos.get(i).getNombreTienda();
                             numeroPedido = productos_todos.get(i).getNumPedido();
                             tiendaId = productos_todos.get(i).getTiendaId();
+                            tiendaFoto = productos_todos.get(i).getFotoTienda();
 
 
 
                         }//ahora crear los agrupados
 
                         pedidos_tiendas.add(new Pedidos_Agrupados(String.valueOf(cantidadTotal)
-                                ,String.valueOf(precioTotal),nombreTienda,numeroPedido,tiendaId));
+                                ,String.valueOf(precioTotal),nombreTienda,numeroPedido,tiendaId,tiendaFoto));
 
                     }//fin numero de pedido
                 }//fin tienda
@@ -117,6 +124,7 @@ public class CarritoFragment extends Fragment {
                 intent.putExtra("TiendaId",tiendaId);
                 intent.putExtra("TiendaNombre",nombre);
                 intent.putExtra("NumeroPedido",numeroPedido);
+
                 getActivity().startActivity(intent);
 
             }
@@ -144,6 +152,17 @@ public class CarritoFragment extends Fragment {
             tNegocio.setText(pedido.getNombreTienda());
             TextView tTiempoEnvio=(TextView)item.findViewById(R.id.tCantidad);
             tTiempoEnvio.setText(pedido.getCantidad());
+
+            ImageView imagenNegocio=(ImageView)item.findViewById(R.id.imagenNegocio);
+
+
+            storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(pedido.getFoto());
+
+            Glide.with(item.getContext())
+                    .using(new FirebaseImageLoader())
+                    .load(storageRef)
+                    .into(imagenNegocio);
+
             return item;
         }
 

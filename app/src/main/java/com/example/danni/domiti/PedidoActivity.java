@@ -13,14 +13,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -33,7 +38,7 @@ public class PedidoActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     Intent intent;
     DatabaseReference myRef1;
-
+    private StorageReference storageRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +104,14 @@ public class PedidoActivity extends AppCompatActivity {
             tNegocio.setText(pedido.getNombreProd());
             TextView tTiempoEnvio=(TextView)item.findViewById(R.id.tCantidad);
             tTiempoEnvio.setText(pedido.getCantidad());
+
+            ImageView imagenNegocio = (ImageView)item.findViewById(R.id.imagenNegocio);
+
+            storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(pedido.getFotoProducto());
+            Glide.with(item.getContext())
+                   .using(new FirebaseImageLoader())
+                    .load(storageRef)
+                    .into(imagenNegocio);
             return item;
         }
 

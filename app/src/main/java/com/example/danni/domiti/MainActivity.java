@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.ubicacion) {
 
         }  else if (id == R.id.info_domiti) {
-
+            fragmentManager.beginTransaction().replace(R.id.contenedor,new AcercaFragment()).commit();
         } else if (id == R.id.cerrar_sesion) {
             FirebaseAuth.getInstance().signOut();
             SharedPreferences sharedPrefs = getSharedPreferences("DomitiPreferences", this.MODE_PRIVATE);

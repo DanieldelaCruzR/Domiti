@@ -1,13 +1,16 @@
 package com.example.danni.domiti;
 
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,10 +86,13 @@ public class TiendasFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String nombre = tiendas.get(position).getNombre();
                 String tiendId = tiendas.get(position).getCelular();
+                String fotoTienda = tiendas.get(position).getFoto();
+
                 Intent intent = new Intent(getActivity(),ProductosActivity.class);
                 //pasar el celular
                 intent.putExtra("TiendaId",tiendId);
                 intent.putExtra("TiendaNombre",nombre);
+                intent.putExtra("TiendaFoto",fotoTienda);
                 getActivity().startActivity(intent);
             }
         });
@@ -130,9 +136,9 @@ public class TiendasFragment extends Fragment {
                     .using(new FirebaseImageLoader())
                     .load(storageRef)
                     .into(imagenNegocio);
-
             return item;
-
         }
+
+
     }
 }
